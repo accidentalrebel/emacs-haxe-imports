@@ -5,9 +5,15 @@
 (defun haxe-imports-read-package (class-name)
   "Reads a package name for a class, offers default values for
 known classes"
-  (let ((package-name (concat "[" class-name "]")))
+  (let ((package-name "sample.package.name"))
     package-name
     )
+  )
+
+(defun haxe-imports-go-to-imports-start ()
+  "Go to the point where java import statements start or should
+start (if there are none)."
+  (goto-char (point-min))
   )
 
 (defun haxe-imports-add-import-with-package (class-name package)
@@ -15,7 +21,9 @@ known classes"
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
                      (read-string "Package name: " (thing-at-paint 'symbol))))
   (save-excursion
-    "Full Name Test"
+    (haxe-imports-go-to-imports-start)
+    (insert "import " (concat package "." class-name) ";")
+    "FullNameTest"
     )
   )
 
