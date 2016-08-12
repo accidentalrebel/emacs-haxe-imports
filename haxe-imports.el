@@ -1,3 +1,6 @@
+;; package test.package;
+;; import test.import.Test;
+
 ;;; Code:
 (require 'thingatpt)
 (require 's)
@@ -6,15 +9,31 @@
   "Reads a package name for a class, offers default values for
 known classes"
   (let ((package-name "sample.package.name"))
-    package-name
-    )
-  )
+    package-name))
 
 (defun haxe-imports-go-to-imports-start ()
   "Go to the point where java import statements start or should
 start (if there are none)."
   (goto-char (point-min))
-  )
+  ;; package declaration is always in the beginning of a file, so no need to
+  ;; reset the point after the first search
+  (let ((package-decl-point (re-search-forward "package .*;" nil t))
+        (import-decl-point (re-search-forward "import .*;" nil t)))
+    ;; 1. If there are imports in the file - go to the first one
+    ;;
+    ;; 2. No imports, and the package declaration is available - go to the end
+    ;; of the declaration
+    ;;
+    ;; 3. Neither package nor import declarations are present - just go to the
+    ;; first line
+    (cond (import-decl-point (goto-char import-decl-point)
+                             (beginning-of-line))
+          (import-decl-point (goto-char package-decl-point)
+                             (forward-line)
+                             (open-line 2)
+                             (forward-line))
+          (t (goto-char (point-min))
+             (open-line 1)))))
 
 (defun haxe-imports-add-import-with-package (class-name package)
   "Add an import for the class for the name and package. Uses no caching."
@@ -23,9 +42,7 @@ start (if there are none)."
   (save-excursion
     (haxe-imports-go-to-imports-start)
     (insert "import " (concat package "." class-name) ";")
-    "FullNameTest"
-    )
-  )
+    "FullNameTest"))
 
 (defun haxe-imports-add-import (class-name)
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
@@ -35,10 +52,7 @@ start (if there are none)."
            (full-name (haxe-imports-add-import-with-package class-name package)))
       (message (concat "Class name is " class-name))
       (message (concat "Package is " package))
-      (message (concat "Full name is " full-name))
-      )
-    )
-  )
+      (message (concat "Full name is " full-name)))))
 
 (defun haxe-imports-add-import-dwim ()
   "Add an import statement for the class at point. If no class is
