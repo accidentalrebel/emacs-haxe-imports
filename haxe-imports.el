@@ -1,20 +1,34 @@
 ;;; Code:
 (require 'thingatpt)
 (require 's)
-(require 'pcache)
 
 (defun haxe-imports-read-package (class-name)
   "Reads a package name for a class, offers default values for
 known classes"
-  (message (concat "Class name is " class-name))
+  (let ((package-name (concat "[" class-name "]")))
+    package-name
+    )
+  )
+
+(defun haxe-imports-add-import-with-package (class-name package)
+  "Add an import for the class for the name and package. Uses no caching."
+  (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
+                     (read-string "Package name: " (thing-at-paint 'symbol))))
+  (save-excursion
+    "Full Name Test"
+    )
   )
 
 (defun haxe-imports-add-import (class-name)
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
-  (message (concat "Class name is " class-name))
   (save-excursion
-    (let* ((key (intern class-name)
-           (package (haxe-imports-read-package class-name)))))
+    (let* ((key (intern class-name))
+           (package (haxe-imports-read-package class-name))
+           (full-name (haxe-imports-add-import-with-package class-name package)))
+      (message (concat "Class name is " class-name))
+      (message (concat "Package is " package))
+      (message (concat "Full name is " full-name))
+      )
     )
   )
 
