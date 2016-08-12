@@ -1,9 +1,21 @@
 ;;; Code:
 (require 'thingatpt)
 (require 's)
+(require 'pcache)
+
+(defun haxe-imports-read-package (class-name)
+  "Reads a package name for a class, offers default values for
+known classes"
+  (message (concat "Class name is " class-name))
+  )
 
 (defun haxe-imports-add-import (class-name)
+  (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
   (message (concat "Class name is " class-name))
+  (save-excursion
+    (let* ((key (intern class-name)
+           (package (haxe-imports-read-package class-name)))))
+    )
   )
 
 (defun haxe-imports-add-import-dwim ()
