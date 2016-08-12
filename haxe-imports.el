@@ -1,15 +1,20 @@
 ;; package test.package;
+
 ;; import test.import.Test;
 
 ;;; Code:
 (require 'thingatpt)
 (require 's)
 
-(defun haxe-imports-read-package (class-name)
-  "Reads a package name for a class, offers default values for
-known classes"
-  (let ((package-name "sample.package.name"))
-    package-name))
+(defgroup haxe-imports nil
+  "Customization for haxe imports package"
+  :group 'languages)
+
+(defcustom haxe-imports-find-block-function 'haxe-imports-find-place-after-last-import
+  "A function that should find a proper insertion place within
+  the block of import declarations."
+  :group 'haxe-imports
+  :type 'function)
 
 (defun haxe-imports-go-to-imports-start ()
   "Go to the point where java import statements start or should
@@ -35,14 +40,32 @@ start (if there are none)."
           (t (goto-char (point-min))
              (open-line 1)))))
 
+(defun haxe-imports-read-package (class-name)
+  "Reads a package name for a class, offers default values for
+known classes"
+  (let ((package-name "sample.package.name"))
+    package-name))
+
+(defun haxe-imports-find-place-after-last-import (full-name class-name package)
+  "Finds the insertion place by moving past the last import declaration in the file."
+  (while (re-search-forward "import[ \t]+.+[ \t]*;" nil t))
+  (beginning-of-line)
+  (unless (equal (point-at-bol) (point-at-eol))
+    (forward-line)
+    (open-line 1)))
+
 (defun haxe-imports-add-import-with-package (class-name package)
   "Add an import for the class for the name and package. Uses no caching."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
                      (read-string "Package name: " (thing-at-paint 'symbol))))
   (save-excursion
-    (haxe-imports-go-to-imports-start)
-    (insert "import " (concat package "." class-name) ";")
-    "FullNameTest"))
+    (let ((full-name "FullNameTest"))
+      (haxe-imports-go-to-imports-start)
+      
+      (funcall haxe-imports-find-block-function full-name class-name package)
+
+      (insert "import " (concat package "." class-name) ";")
+      full-name)))
 
 (defun haxe-imports-add-import (class-name)
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
