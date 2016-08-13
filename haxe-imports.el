@@ -3,6 +3,7 @@
 ;; import test.import.Test;
 
 ;;; Code:
+(require 'cl-lib)
 (require 'thingatpt)
 (require 's)
 (require 'pcache)
@@ -67,6 +68,20 @@ start (if there are none)."
           (t (goto-char (point-min))
              (open-line 1)))))
 
+(defun haxe-imports-get-import (line)
+  "Return the fully-qualified package for the given import line."
+  (when line
+    (cadr (s-match "import \\\(.*\\\);"
+                   (string-trim line)))))
+
+(defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
+  "Finds the insertion place by moving past the last import declaration in the file."
+  (while (re-search-forward "import[ \t]+.+[ \t]*;" nil t))
+  (beginning-of-line)
+  (unless (equal (point-at-bol) (point-at-eol))
+    (forward-line)
+    (open-line 1)))
+
 (defun haxe-imports-read-package (class-name cached-package)
   "Reads a package name for a class, offers default values for
 known classes"
@@ -78,14 +93,31 @@ known classes"
              (prompt (concat "Package " default-prompt ": ")))
         (read-string prompt nil nil default-package))))
 
-(defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
-  "Finds the insertion place by moving past the last import declaration in the file."
-  (while (re-search-forward "import[ \t]+.+[ \t]*;" nil t))
-  (beginning-of-line)
-  (unless (equal (point-at-bol) (point-at-eol))
-    (forward-line)
-    (open-line 1)))
+;;;###autoload
+(defun haxe-imports-scan-file ()
+  "Scans a haxe-mode buffer, adding any import class -> package
+mappings to the import cache. If called with a prefix arguments
+overwrites any existing cache entries for the file."
+  (interactive)
+  (when (eq 'haxe-mode major-mode)
+    (let* ((cache (pcache-repository haxe-imports-cache-name)))
+      (dolist (import (haxe-imports-list-imports))
+        (message (concat "import: " import))
+        ))
+    )
+  )
 
+;;;###autoload
+(defun haxe-imports-list-imports ()
+  "Return a list of all fully-qualified packages in the current
+Haxe-mode buffer"
+  (interactive)
+  (cl-mapcar
+   #'haxe-imports-get-import
+   (cl-remove-if-not (lambda (str) (s-matches? "import[ \t]+.+[ \t]*;" str))
+                     (s-lines (buffer-string)))))
+
+;;;###autoload
 (defun haxe-imports-add-import-with-package (class-name package)
   "Add an import for the class for the name and package. Uses no caching."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
@@ -99,6 +131,7 @@ known classes"
       (insert "import " (concat package "." class-name) ";")
       full-name)))
 
+;;;###autoload
 (defun haxe-imports-add-import (class-name)
   "Import the Java class for the symbol at point. Uses the symbol
 at the point for the class name, ask for a confirmation of the
@@ -133,6 +166,7 @@ already-existing class name."
         (pcache-save cache))
       full-name)))
 
+;;;###autoload
 (defun haxe-imports-add-import-dwim ()
   "Add an import statement for the class at point. If no class is
 found, prompt for the class name. If the class's package already
