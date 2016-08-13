@@ -53,10 +53,13 @@ start (if there are none)."
 (defun haxe-imports-read-package (class-name)
   "Reads a package name for a class, offers default values for
 known classes"
-  (let* ((package-name (cdr (assoc-string class-name haxe-imports-default-packages))))
-    package-name))
+  (let* ((default-package (cdr (assoc-string class-name haxe-imports-default-packages)))
+         (default-prompt (if default-package
+                             (concat "[" default-package "]") ""))
+         (prompt (concat "Package " default-prompt ": ")))
+    (read-string prompt nil nil default-package)))
 
-(defun haxe-imports-find-place-after-last-import (full-name class-name package)
+(defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
   "Finds the insertion place by moving past the last import declaration in the file."
   (while (re-search-forward "import[ \t]+.+[ \t]*;" nil t))
   (beginning-of-line)
