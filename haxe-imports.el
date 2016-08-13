@@ -74,6 +74,12 @@ start (if there are none)."
     (cadr (s-match "import \\\(.*\\\);"
                    (string-trim line)))))
 
+(defun haxe-imports-get-package-and-class (import)
+  "Explode the import and return (pkg . class) for the given import.
+Example 'java.util.Map' returns '(\"java.util\" \"Map\")."
+  (when import
+    (cl-subseq (s-match "\\\(.*\\\)\\\.\\\([A-Z].+\\\);?" import) 1)))
+
 (defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
   "Finds the insertion place by moving past the last import declaration in the file."
   (while (re-search-forward "import[ \t]+.+[ \t]*;" nil t))
@@ -102,10 +108,15 @@ overwrites any existing cache entries for the file."
   (when (eq 'haxe-mode major-mode)
     (let* ((cache (pcache-repository haxe-imports-cache-name)))
       (dolist (import (haxe-imports-list-imports))
-        (message (concat "import: " import))
-        ))
-    )
-  )
+        (let ((pkg-class-list (haxe-imports-get-package-and-class import)))
+          (when pkg-class-list
+            (let* ((pkg (car pkg-class-list))
+                   (class (intern (cadr pkg-class-list)))
+                   (exists-p (pcache-get cache class)))
+              (when (or current-prefix-arg (not exists-p))
+                (message "Adding %s - %s to the haxe imports cache" class pkg)
+                (pcache-put cache class pkg))))))
+      (pcache-save cache))))
 
 ;;;###autoload
 (defun haxe-imports-list-imports ()
