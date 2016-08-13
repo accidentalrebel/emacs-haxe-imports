@@ -12,19 +12,13 @@
   "Customization for haxe imports package"
   :group 'languages)
 
-(defcustom haxe-imports-cache-name "haxe-imports"
-  "Name of the cache to be used for the ClassName to Package
-  mapping cache."
-  :group 'haxe-imports
-  :type 'string)
-
-(defcustom haxe-imports-use-cache t
-  "Whether packages for classes should be cached"
+(defcustom haxe-imports-save-buffer-after-import-added t
+  "`t' to save the current buffer after inserting an import statement."
   :group 'haxe-imports
   :type 'boolean)
 
-(defcustom haxe-imports-save-buffer-after-import-added t
-  "`t' to save the current buffer after inserting an import statement."
+(defcustom haxe-imports-use-cache t
+  "Whether packages for classes should be cached"
   :group 'haxe-imports
   :type 'boolean)
 
@@ -33,6 +27,12 @@
   the block of import declarations."
   :group 'haxe-imports
   :type 'function)
+
+(defcustom haxe-imports-cache-name "haxe-imports"
+  "Name of the cache to be used for the ClassName to Package
+  mapping cache."
+  :group 'haxe-imports
+  :type 'string)
 
 (defcustom haxe-imports-default-packages
   '(("EnumTools" . "haxe")
@@ -79,6 +79,12 @@ start (if there are none)."
 Example 'java.util.Map' returns '(\"java.util\" \"Map\")."
   (when import
     (cl-subseq (s-match "\\\(.*\\\)\\\.\\\([A-Z].+\\\);?" import) 1)))
+
+(defun haxe-imports-import-exists-p (full-name)
+  "Checks if the import already exists"
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward (concat "^[ \t]*import[ \t]+" full-name "[ \t]*;") nil t)))
 
 (defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
   "Finds the insertion place by moving past the last import declaration in the file."
@@ -134,11 +140,19 @@ Haxe-mode buffer"
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
                      (read-string "Package name: " (thing-at-paint 'symbol))))
   (save-excursion
-    (let ((full-name "FullNameTest"))
+    (let ((full-name (or (car (s-match ".*\\\..*" class-name))
+                         (concat package "." class-name))))
+      (when (haxe-imports-import-exists-p full-name)
+        (user-error "Import for %s' already exists" full-name))
+
+      ;; Goto the start of the imports block
       (haxe-imports-go-to-imports-start)
       
+      ;; Search for a proper insertion place within the block of imports
       (funcall haxe-imports-find-block-function full-name class-name package)
 
+      ;; The insertion itself. Note that the only thing left to do here is to
+      ;; insert the import.
       (insert "import " (concat package "." class-name) ";")
       full-name)))
 
