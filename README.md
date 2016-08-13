@@ -76,4 +76,4 @@ you can customize *haxe-imports-cache-name* to have a separate String name
 (perhaps in a *.dir-locals.el* for per-project imports).
 
 # Things to do:
-- [] Add tests
+[x] Add tests

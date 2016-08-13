@@ -95,7 +95,7 @@ start (if there are none)."
     ;; first line
     (cond (import-decl-point (goto-char import-decl-point)
                              (beginning-of-line))
-          (import-decl-point (goto-char package-decl-point)
+          (package-decl-point (goto-char package-decl-point)
                              (forward-line)
                              (open-line 2)
                              (forward-line))
