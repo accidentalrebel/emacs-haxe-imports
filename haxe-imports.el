@@ -41,6 +41,7 @@
 (require 'thingatpt)
 (require 's)
 (require 'pcache)
+(require 'subr-x)
 
 (defgroup haxe-imports nil
   "Customization for haxe imports package"
