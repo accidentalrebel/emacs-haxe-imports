@@ -126,9 +126,12 @@ already-existing class name."
       (when haxe-imports-save-buffer-after-import-added
         (save-buffer))
 
-      (message (concat "Class name is " class-name))
-      (message (concat "Package is " package))
-      (message (concat "Full name is " full-name)))))
+      (when add-to-cache?
+        (message "Adding %s -> %s to haxe imports cache"
+                 class-name package)
+        (pcache-put cache key package)
+        (pcache-save cache))
+      full-name)))
 
 (defun haxe-imports-add-import-dwim ()
   "Add an import statement for the class at point. If no class is
