@@ -75,5 +75,5 @@ class->package names, however, if you want to have separate caches per project,
 you can customize *haxe-imports-cache-name* to have a separate String name
 (perhaps in a *.dir-locals.el* for per-project imports).
 
-# Things to do:
+## Things to do:
 [x] Add tests

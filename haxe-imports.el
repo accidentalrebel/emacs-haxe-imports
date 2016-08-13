@@ -4,7 +4,7 @@
 
 ;; Author: Juan Karlo Licudine <karlo@accidentalrebel.com>
 ;; URL: http://www.github.com/dakrone/emacs-haxe-imports
-;; Version: 0.1.1
+;; Version: 0.1.0
 ;; Keywords: haxe 
 ;; Package-Requires: ((emacs "24.4") (s "1.10.0") (pcache "0.3.2"))
 
