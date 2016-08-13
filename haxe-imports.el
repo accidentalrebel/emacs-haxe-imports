@@ -16,6 +16,16 @@
   :group 'haxe-imports
   :type 'function)
 
+(defcustom haxe-imports-default-packages
+  '(("EnumTools" . "haxe")
+    ("Serializer" . "haxe")
+    ("Unserializer" . "haxe")
+    ("Fast" . "haxe.xml"))
+  "An alist mapping class names to probable packages of the
+classes."
+  :group 'haxe-imports
+  :type '(alist :key-type string :value-type string))
+
 (defun haxe-imports-go-to-imports-start ()
   "Go to the point where java import statements start or should
 start (if there are none)."
@@ -43,7 +53,7 @@ start (if there are none)."
 (defun haxe-imports-read-package (class-name)
   "Reads a package name for a class, offers default values for
 known classes"
-  (let ((package-name "sample.package.name"))
+  (let* ((package-name (cdr (assoc-string class-name haxe-imports-default-packages))))
     package-name))
 
 (defun haxe-imports-find-place-after-last-import (full-name class-name package)
@@ -68,6 +78,14 @@ known classes"
       full-name)))
 
 (defun haxe-imports-add-import (class-name)
+  "Import the Java class for the symbol at point. Uses the symbol
+at the point for the class name, ask for a confirmation of the
+class name before adding it.
+Checks the import cache to see if a package entry exists for the
+given class. If found, adds an import statement for the class. If
+not found, prompts for the package and saves it to the cache.
+If called with a prefix argument, overwrites the package for an
+already-existing class name."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
   (save-excursion
     (let* ((key (intern class-name))
