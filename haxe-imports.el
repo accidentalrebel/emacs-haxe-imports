@@ -5,10 +5,22 @@
 ;;; Code:
 (require 'thingatpt)
 (require 's)
+(require 'pcache)
 
 (defgroup haxe-imports nil
   "Customization for haxe imports package"
   :group 'languages)
+
+(defcustom haxe-imports-cache-name "haxe-imports"
+  "Name of the cache to be used for the ClassName to Package
+  mapping cache."
+  :group 'haxe-imports
+  :type 'string)
+
+(defcustom haxe-imports-use-cache t
+  "Whether packages for classes should be cached"
+  :group 'haxe-imports
+  :type 'boolean)
 
 (defcustom haxe-imports-find-block-function 'haxe-imports-find-place-after-last-import
   "A function that should find a proper insertion place within
@@ -50,14 +62,16 @@ start (if there are none)."
           (t (goto-char (point-min))
              (open-line 1)))))
 
-(defun haxe-imports-read-package (class-name)
+(defun haxe-imports-read-package (class-name cached-package)
   "Reads a package name for a class, offers default values for
 known classes"
-  (let* ((default-package (cdr (assoc-string class-name haxe-imports-default-packages)))
-         (default-prompt (if default-package
-                             (concat "[" default-package "]") ""))
-         (prompt (concat "Package " default-prompt ": ")))
-    (read-string prompt nil nil default-package)))
+  (or (and (not current-prefix-arg)
+           cached-package)
+      (let* ((default-package (cdr (assoc-string class-name haxe-imports-default-packages)))
+             (default-prompt (if default-package
+                                 (concat "[" default-package "]") ""))
+             (prompt (concat "Package " default-prompt ": ")))
+        (read-string prompt nil nil default-package))))
 
 (defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
   "Finds the insertion place by moving past the last import declaration in the file."
@@ -92,7 +106,12 @@ already-existing class name."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
   (save-excursion
     (let* ((key (intern class-name))
-           (package (haxe-imports-read-package class-name))
+           (cache (pcache-repository haxe-imports-cache-name))
+           ;; Check if we have seen this class's package before
+           (cached-package (and haxe-imports-use-cache
+                                (pcache-get cache key)))
+
+           (package (haxe-imports-read-package class-name cached-package))
            (full-name (haxe-imports-add-import-with-package class-name package)))
       (message (concat "Class name is " class-name))
       (message (concat "Package is " package))
