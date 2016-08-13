@@ -22,6 +22,11 @@
   :group 'haxe-imports
   :type 'boolean)
 
+(defcustom haxe-imports-save-buffer-after-import-added t
+  "`t' to save the current buffer after inserting an import statement."
+  :group 'haxe-imports
+  :type 'boolean)
+
 (defcustom haxe-imports-find-block-function 'haxe-imports-find-place-after-last-import
   "A function that should find a proper insertion place within
   the block of import declarations."
@@ -110,9 +115,17 @@ already-existing class name."
            ;; Check if we have seen this class's package before
            (cached-package (and haxe-imports-use-cache
                                 (pcache-get cache key)))
+           ;; If called with a prefix, overwrite the cached value always
+           (add-to-cache? (or current-prefix-arg
+                              (eq nil cached-package)))
 
            (package (haxe-imports-read-package class-name cached-package))
            (full-name (haxe-imports-add-import-with-package class-name package)))
+
+      ;; Optionally save the buffer and cache the full package name
+      (when haxe-imports-save-buffer-after-import-added
+        (save-buffer))
+
       (message (concat "Class name is " class-name))
       (message (concat "Package is " package))
       (message (concat "Full name is " full-name)))))
