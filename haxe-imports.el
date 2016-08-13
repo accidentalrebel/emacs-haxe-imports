@@ -1,6 +1,40 @@
-;; package test.package;
+;;; haxe-imports.el --- Code for dealing with Haxe imports based on java-imports by Matthew Lee Hinman
 
-;; import test.import.Test;
+;; Copyright (C) 2015 Juan Karlo Lidudine
+
+;; Author: Juan Karlo Licudine <karlo@accidentalrebel.com>
+;; URL: http://www.github.com/dakrone/emacs-haxe-imports
+;; Version: 0.1.1
+;; Keywords: haxe 
+;; Package-Requires: ((emacs "24.4") (s "1.10.0") (pcache "0.3.2"))
+
+;; This file is not part of GNU Emacs.
+
+;;; Commentary:
+
+;; Provides a way to easily add `import' statements for Haxe classes
+
+;;; Usage:
+
+;; (require 'haxe-imports)
+;; (define-key haxe-mode-map (kbd "M-I") 'haxe-imports-add-import)
+
+;;; License:
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 3
+;; of the License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
 (require 'cl-lib)
@@ -45,7 +79,7 @@ classes."
   :type '(alist :key-type string :value-type string))
 
 (defun haxe-imports-go-to-imports-start ()
-  "Go to the point where java import statements start or should
+  "Go to the point where haxe import statements start or should
 start (if there are none)."
   (goto-char (point-min))
   ;; package declaration is always in the beginning of a file, so no need to
@@ -76,7 +110,7 @@ start (if there are none)."
 
 (defun haxe-imports-get-package-and-class (import)
   "Explode the import and return (pkg . class) for the given import.
-Example 'java.util.Map' returns '(\"java.util\" \"Map\")."
+Example 'haxe.util.Map' returns '(\"haxe.util\" \"Map\")."
   (when import
     (cl-subseq (s-match "\\\(.*\\\)\\\.\\\([A-Z].+\\\);?" import) 1)))
 
@@ -158,7 +192,7 @@ Haxe-mode buffer"
 
 ;;;###autoload
 (defun haxe-imports-add-import (class-name)
-  "Import the Java class for the symbol at point. Uses the symbol
+  "Import the Haxe class for the symbol at point. Uses the symbol
 at the point for the class name, ask for a confirmation of the
 class name before adding it.
 Checks the import cache to see if a package entry exists for the
