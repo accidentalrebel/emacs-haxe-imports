@@ -41,6 +41,7 @@
 (require 'thingatpt)
 (require 's)
 (require 'pcache)
+(require 'subr-x)
 
 (defgroup haxe-imports nil
   "Customization for haxe imports package"
@@ -172,7 +173,7 @@ Haxe-mode buffer"
 (defun haxe-imports-add-import-with-package (class-name package)
   "Add an import for the class for the name and package. Uses no caching."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
-                     (read-string "Package name: " (thing-at-paint 'symbol))))
+                     (read-string "Package name: " (thing-at-point 'symbol))))
   (save-excursion
     (let ((full-name (or (car (s-match ".*\\\..*" class-name))
                          (concat package "." class-name))))
