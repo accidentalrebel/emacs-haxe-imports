@@ -22,7 +22,7 @@
 
 ;;; License:
 
-;; This program is free software; you can redistribute it and/or
+;; This program is free software; you can redistributfe it and/or
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 3
 ;; of the License, or (at your option) any later version.
@@ -122,7 +122,7 @@ Example 'haxe.util.Map' returns '(\"haxe.util\" \"Map\")."
     (goto-char (point-min))
     (re-search-forward (concat "^[ \t]*import[ \t]+" full-name "[ \t]*;") nil t)))
 
-(defun haxe-imports-find-place-aftr-last-import (full-name class-name package)
+(defun haxe-imports-find-place-after-last-import (full-name class-name package)
   "Finds the insertion place by moving past the last import declaration in the file."
   (while (re-search-forward "import[ \t]+.+[ \t]*;" nil t))
   (beginning-of-line)
