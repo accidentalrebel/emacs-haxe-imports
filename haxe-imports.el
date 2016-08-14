@@ -1,4 +1,4 @@
-;;; haxe-imports.el --- Code for dealing with Haxe imports based on java-imports by Matthew Lee Hinman
+;;; haxe-imports.el --- Code for dealing with Haxe imports
 
 ;; Copyright (C) 2015 Juan Karlo Lidudine
 
@@ -12,11 +12,12 @@
 
 ;;; Commentary:
 
-;; Provides a way to easily add `import' statements for Haxe classes
+;; Provides a way to easily add `import' statements for Haxe classes.
+;; Based on java-imports by Matthew Lee Hinman.
 
-;;; Usage:
+;; Usage:
 
-;; (require 'haxe-imports)
+;; (require 'haxe-imports) ;; unless installed as a package
 ;; (define-key haxe-mode-map (kbd "M-I") 'haxe-imports-add-import)
 
 ;;; License:
