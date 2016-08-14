@@ -1,4 +1,7 @@
 # Emacs Haxe Imports
+
+[![MELPA](http://melpa.org/packages/haxe-imports-badge.svg)](http://melpa.org/#/haxe-imports)
+
 Code for dealing with Haxe imports
 
 ## Introduction
