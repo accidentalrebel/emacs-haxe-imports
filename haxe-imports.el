@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015 Juan Karlo Lidudine
 
 ;; Author: Juan Karlo Licudine <karlo@accidentalrebel.com>
-;; URL: http://www.github.com/dakrone/emacs-haxe-imports
+;; URL: http://www.github.com/accidentalrebel/emacs-haxe-imports
 ;; Version: 0.1.0
 ;; Keywords: haxe 
 ;; Package-Requires: ((emacs "24.4") (s "1.10.0") (pcache "0.3.1"))
@@ -127,7 +127,9 @@ Example 'haxe.util.Map' returns '(\"haxe.util\" \"Map\")."
     (open-line 1)))
 
 (defun haxe-imports-read-package (class-name cached-package)
-  "Read a package name for a class, offers default values for known classes"
+  "Read a package name for a class.
+
+Offers default values for known classes"
   (or (and (not current-prefix-arg)
            cached-package)
       (let* ((default-package (cdr (assoc-string class-name haxe-imports-default-packages)))
@@ -164,7 +166,12 @@ Example 'haxe.util.Map' returns '(\"haxe.util\" \"Map\")."
 
 ;;;###autoload
 (defun haxe-imports-add-import-with-package (class-name package)
-  "Add an import for the class for the name and package.  Uses no caching."
+  "Add an import for the class for the name and package.
+
+CLASS-NAME refers to the name of the class.
+PACKAGE refers to the package path.
+
+Uses no caching."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))
                      (read-string "Package name: " (thing-at-point 'symbol))))
   (save-excursion
@@ -186,8 +193,15 @@ Example 'haxe.util.Map' returns '(\"haxe.util\" \"Map\")."
 
 ;;;###autoload
 (defun haxe-imports-add-import (class-name)
-  "Import the Haxe class for the symbol at point.  Uses the symbol at the point for the CLASS-NAME, ask for a confirmation of the class name before adding it.
-Checks the import cache to see if a package entry exists for the given class.  If found, adds an import statement for the class.  If not found, prompts for the package and saves it to the cache.  If called with a prefix argument, overwrites the package for an
+  "Import the Haxe class for the symbol at point.
+
+Makes use of the symbol at the point for the CLASS-NAME, ask for a
+confirmation of the class name before adding it.
+Checks the import cache to see if a package entry exists for the given class.  
+If found, adds an import statement for the class.  
+
+If not found, prompts for the package and saves it to the cache.
+If called with a prefix argument, overwrites the package for an
 already-existing class name."
   (interactive (list (read-string "Class name: " (thing-at-point 'symbol))))
   (save-excursion
@@ -216,7 +230,11 @@ already-existing class name."
 
 ;;;###autoload
 (defun haxe-imports-add-import-dwim ()
-  "Add an import statement for the class at point.  If no class is found, prompt for the class name.  If the class's package already exists in the cache, add it and return, otherwise prompt for the package and cache it for future statements."
+  "Add an import statement for the class at point.
+
+If no class is found, prompt for the class name.  If the class's
+package already exists in the cache, add it and return, otherwise
+prompt for the package and cache it for future statements."
   (interactive)
   (let ((class (or (thing-at-point 'symbol)
                    (read-string "Class name: "))))
