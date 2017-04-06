@@ -3,7 +3,7 @@ EMACS ?= emacs
 
 all: test
 
-test: unit
+test: unit ecukes
 
 unit:
 	${CASK} exec ert-runner
