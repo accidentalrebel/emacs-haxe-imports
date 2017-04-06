@@ -13,7 +13,7 @@
 
 ;; Ensure that we don't load old byte-compiled versions
 (let ((load-prefer-newer t))
-  (require 'emacs-haxe-imports)
+  (require 'haxe-imports)
   (require 'espuds)
   (require 'ert))
 
