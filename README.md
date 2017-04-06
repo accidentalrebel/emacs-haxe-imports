@@ -1,6 +1,8 @@
 # Emacs Haxe Imports
 
+[![Build Status](https://travis-ci.org/accidentalrebel/emacs-haxe-imports.svg)](https://travis-ci.org/accidentalrebel/emacs-haxe-imports)
 [![MELPA](http://melpa.org/packages/haxe-imports-badge.svg)](http://melpa.org/#/haxe-imports)
+[![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
 Code for dealing with Haxe imports
 

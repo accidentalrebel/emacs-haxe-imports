@@ -1,9 +1,12 @@
-;;; haxe-imports-test.el --- tests for haxe imports
+;;; Test for `haxe-imports'
+
+;;; Commentary:
+;; These are the tests for `haxe-imports'
 
 ;;; Code:
 
-(require 'ert)
-;;(load-file "haxe-imports.el")
+(ert-deftest haxe-imports-should-not-pass ()
+  (should-not nil))
 
 (ert-deftest t-go-to-imports-start ()
   ;; both package and imports present? Goto to the first import line beginning
@@ -86,6 +89,3 @@
   (should
    (equal (haxe-imports-get-package-and-class "org.foo.bar.baz.ThingOne")
           '("org.foo.bar.baz" "ThingOne"))))
-
-;; End:
-;;; haxe-imports-test.el ends here
