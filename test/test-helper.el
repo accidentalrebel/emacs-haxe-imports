@@ -37,5 +37,4 @@
     (require 'cl))
 (require 'haxe-imports)
 
-(provide 'test-helper)
 ;;; test-helper.el ends here
